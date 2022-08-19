@@ -555,7 +555,7 @@ void CTextRenderer::UpdateTextCache_HarfBuzz(array<CHarfbuzzGlyph>* pGlyphChain,
 	hb_buffer_set_script(m_pHBBuffer, HB_SCRIPT_ARABIC);
 	hb_buffer_set_language(m_pHBBuffer, hb_language_from_string("ar", 2));
 	
-	hb_buffer_add_utf16(m_pHBBuffer, pTextUTF16, Length, Start, Length);
+	hb_buffer_add_utf16(m_pHBBuffer, (uint16_t *)pTextUTF16, Length, Start, Length);
 	hb_shape(m_Fonts[FontId]->m_pHBFont, m_pHBBuffer, 0, 0);
 	
 	unsigned int GlyphCount;
@@ -581,7 +581,7 @@ void CTextRenderer::UpdateTextCache_Font(array<CHarfbuzzGlyph>* pGlyphChain, con
 	int SubLength = 0;
 	int LastIndex = 0;
 	UChar Char;
-	UCharCharacterIterator Iter(pTextUTF16+Start, Length);
+	icu::UCharCharacterIterator Iter(pTextUTF16+Start, Length);
 	while(Iter.hasNext())
 	{
 		Char = Iter.next32PostInc();
@@ -645,7 +645,7 @@ void CTextRenderer::UpdateTextCache_BiDi(array<CHarfbuzzGlyph>* pGlyphChain, con
 	//Use ICU for bidirectional text
 	//note: bidirectional texts appear for example when a latin username is displayed in a arabic text
 	UErrorCode ICUError = U_ZERO_ERROR;
-	UnicodeString UTF16Text = icu::UnicodeString::fromUTF8(pText);
+	icu::UnicodeString UTF16Text = icu::UnicodeString::fromUTF8(pText);
 	UBiDi* pICUBiDi = ubidi_openSized(UTF16Text.length(), 0, &ICUError);
 	
 	//Perform the BiDi algorithm
